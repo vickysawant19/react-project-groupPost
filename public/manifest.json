@@ -1,0 +1,13 @@
+{
+  "name": "Group Post App",
+  "short_name": "Group Post",
+  "start_url": ".",
+  "display": "standalone",
+  "icons": [
+    {
+      "src": "../src/assets/group_post_app_icon.ico",
+      "sizes": "192x192",
+      "type": "image/ico"
+    }
+  ]
+}

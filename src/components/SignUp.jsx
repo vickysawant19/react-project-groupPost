@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import authService from "../appwrite/auth";
+import { useDispatch, useSelector } from "react-redux";
+import { login, selectUser } from "../store/userSlice";
 
 const SignUp = () => {
   const {
@@ -8,17 +10,14 @@ const SignUp = () => {
     register,
     formState: { errors },
   } = useForm();
-  const [user, setUser] = useState();
 
-  useEffect(() => {
-    authService.getCurrentUser().then((user) => setUser(user));
-  }, []);
+  const userData = useSelector(selectUser);
+
+  const dispatch = useDispatch();
 
   const onSubmit = (values) => {
-    authService.createAccount(values).then((user) => setUser(user));
+    authService.createAccount(values).then((user) => dispatch(login(user)));
   };
-
-  console.log(user);
 
   return (
     <>

@@ -15,6 +15,13 @@ import Login from "./components/Login.jsx";
 
 import ErrorPage from "./components/ErrorPage.jsx";
 import SignUp from "./components/SignUp.jsx";
+import { Provider } from "react-redux";
+import { store } from "./store/store.js";
+import ProtectedRoute from "./components/private/ProtectedRoute.jsx";
+import Home from "./components/private/Home.jsx";
+import Addpost from "./components/private/Addpost.jsx";
+import Posts from "./components/private/Posts.jsx";
+import Post from "./components/private/Post.jsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -22,6 +29,12 @@ const router = createBrowserRouter(
       <Route path="/" element={<Login />} />
       <Route path="login" element={<Login />} />
       <Route path="signup" element={<SignUp />} />
+      <Route element={<ProtectedRoute />}>
+        <Route path="home" element={<Home />} />
+        <Route path="addpost" element={<Addpost />} />
+        <Route path="posts" element={<Posts />} />
+        <Route path="posts/:id" element={<Post />} />
+      </Route>
       <Route path="*" element={<ErrorPage />} />
     </Route>
   )
@@ -29,6 +42,8 @@ const router = createBrowserRouter(
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <Provider store={store}>
+      <RouterProvider router={router} />
+    </Provider>
   </React.StrictMode>
 );

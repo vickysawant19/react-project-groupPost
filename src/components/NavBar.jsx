@@ -1,23 +1,56 @@
 import React from "react";
 
-import { NavLink, useLocation } from "react-router-dom";
-import conf from "../config/conf";
-import authService from "../appwrite/auth";
+import { NavLink } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { selectStatus, selectUser } from "../store/userSlice";
+import Logo from "./Logo";
+import Logout from "./Logout";
 
 const NavBar = () => {
-  const { pathname: path } = useLocation();
-  // console.log(import.meta.env.VITE_APPWRITE_URL);
-  console.log(authService);
+  const userData = useSelector(selectUser);
+  const status = useSelector(selectStatus);
+
+  const NavItem = [
+    {
+      name: "Home",
+      slug: "/",
+      active: true,
+    },
+    {
+      name: "Add Posts",
+      slug: "/addpost",
+      active: status,
+    },
+    {
+      name: "Posts",
+      slug: "/posts",
+      active: status,
+    },
+  ];
+
   return (
     <>
-      <div className="w-full bg-[#B8E8F1] ">
-        <div className="max-w-screen-md mx-auto font-mono text-xl w-full h-10 flex justify-between  items-center ">
-          <div className="flex items-center">
-            <img className="w-10 p-1" src="src\assets\logo.png" alt="" />
+      <div className="max-w-screen-md mx-auto font-mono text-xl w-full  ">
+        <div className="w-full flex justify-between items-center bg-[#B8E8F1] font-sans text-[15px]">
+          <div className="flex items-center ">
+            <Logo width="30px" />
             <h1 className="mx-2">VS-GroupPostApp</h1>
           </div>
-          <div className="flex gap-2 mx-2">
-            {path.includes("login") || path.includes("signup") ? (
+          <div className="flex items-center gap-2 mx-2 ">
+            {status &&
+              NavItem.map((item) => (
+                <NavLink
+                  className="border p-1 hover:bg-sky-500"
+                  key={item.name}
+                  to={item.slug}
+                >
+                  {item.name}
+                </NavLink>
+              ))}
+
+            {userData ? (
+              <Logout />
+            ) : (
               <div>
                 <NavLink
                   className={({ isActive }) => (isActive ? "hidden" : "")}
@@ -25,7 +58,6 @@ const NavBar = () => {
                 >
                   Login
                 </NavLink>
-
                 <NavLink
                   className={({ isActive }) => (isActive ? "hidden" : "")}
                   to={"signup"}
@@ -33,8 +65,6 @@ const NavBar = () => {
                   SignUp
                 </NavLink>
               </div>
-            ) : (
-              ""
             )}
           </div>
         </div>

@@ -1,0 +1,181 @@
+import React, { useCallback, useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import RTE from "../RTE";
+import authService from "../../appwrite/auth";
+import dbservice from "../../appwrite/database";
+import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { selectUser } from "../../store/userSlice";
+import Input from "../Input";
+import Select from "../Select";
+import Button from "../Button";
+
+const PostForm = ({ post }) => {
+  const [img, setImg] = useState();
+  const [previewImg, setPreviewImg] = useState();
+
+  const { register, handleSubmit, watch, setValue, control, getValues } =
+    useForm({
+      defaultValues: {
+        title: post?.title || "",
+        slug: post?.slug || "",
+        content: post?.content || "",
+        status: post?.status || "active",
+        featuredImage: post?.featuredImage || "",
+      },
+    });
+
+  const navigate = useNavigate();
+  const userData = useSelector(selectUser);
+
+  const handleFileInputChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreviewImg(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const getImage = async () => {
+    if (post) {
+      const image = await dbservice.getFilePreview(post?.featuredImage);
+      if (image) setImg(image);
+    }
+  };
+
+  useEffect(() => {
+    getImage();
+  }, [post]);
+
+  const submit = async (data) => {
+    if (post) {
+      const file = data.image[0] ? dbservice.uploadFile(data.image[0]) : null;
+
+      if (file) {
+        dbservice.deleteFile(post.featuredImage);
+      }
+      const dbPost = await dbservice.updateDocument(post.$id, {
+        ...data,
+        featuredImage: file ? file.$id : undefined,
+      });
+      if (dbPost) {
+        navigate(`/post/${dbPost.$id}`);
+      }
+    } else {
+      const file = await dbservice.uploadFile(data.image[0]);
+      if (file) {
+        const fileId = file.$id;
+        data.featuredImage = fileId;
+        const dbPost = await dbservice.createDocument({
+          ...data,
+          userId: userData.$id,
+        });
+        if (dbPost) {
+          navigate(`/post/${dbPost.$id}`);
+        }
+      }
+    }
+  };
+
+  const slugTransform = useCallback((value) => {
+    if (value && typeof value === "string") {
+      return value
+        .trim()
+        .toLowerCase()
+        .replace(/[^a-zA-Z0-9\s]+/g, "-")
+        .replace(/\s+/g, "-"); // Replace multiple spaces with a single dash
+    }
+    return value;
+  });
+
+  useEffect(() => {
+    const subscription = watch((value, { name }) => {
+      if (name === "title") {
+        setValue("slug", slugTransform(value.title), { shouldValidate: true });
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, [watch, setValue, slugTransform]);
+
+  return (
+    <form onSubmit={handleSubmit(submit)} className="flex flex-wrap p-2">
+      <div className="md:w-2/3 w-full px-2">
+        <Input
+          label="Title :"
+          placeholder="Title"
+          className="mb-4"
+          {...register("title", { required: true })}
+        />
+
+        {post ? (
+          ""
+        ) : (
+          <Input
+            label="Slug :"
+            placeholder="Slug"
+            className="mb-4 "
+            {...register("slug", { required: true })}
+            onInput={(e) => {
+              setValue("slug", slugTransform(e.currentTarget.value), {
+                shouldValidate: true,
+              });
+            }}
+          />
+        )}
+        <RTE
+          label="Content : "
+          name="content"
+          control={control}
+          defaultValue={getValues("content")}
+          className="w-full mb-2"
+        />
+      </div>
+
+      <div className="md:w-1/3 w-full m-2">
+        <Input
+          label="Featured Image:"
+          type="file"
+          className="mb-2"
+          accept="image/png,image/jpg,image/jpeg,image/gif"
+          {...register("image", { required: !post })}
+          onChange={handleFileInputChange}
+        />
+        {previewImg && (
+          <div>
+            <h2>Preview:</h2>
+            <img className="h-32 mb-2" src={previewImg} alt="Preview" />
+          </div>
+        )}
+        {post && (
+          <div>
+            <h2>Image:</h2>
+            <img
+              src={img}
+              alt={post.title}
+              className="mb-2 h-32 object-contain"
+            />
+          </div>
+        )}
+
+        <Select
+          options={["active", "inactive"]}
+          label="Status"
+          className="mb-2"
+          {...register("status", { required: true })}
+        />
+        <Button
+          type="submit"
+          bgColor={post ? "bg-green-500" : undefined}
+          className="w-full mt-2 border"
+        >
+          {post ? "update" : "Submit"}
+        </Button>
+      </div>
+    </form>
+  );
+};
+
+export default PostForm;

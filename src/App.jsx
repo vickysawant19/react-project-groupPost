@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
-import NavBar from "./components/NavBar";
-import Login from "./components/Login";
+import NavBar from "./components/pages/NavBar";
+import Login from "./components/pages/Login";
 import { Outlet } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { login, logout, selectUser } from "./store/userSlice";
 import authService from "./appwrite/auth";
-import Footer from "./components/Footer";
+import Footer from "./components/pages/Footer";
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);

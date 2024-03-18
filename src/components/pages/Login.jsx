@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import authService from "../appwrite/auth";
+import authService from "../../appwrite/auth";
 import { useDispatch, useSelector } from "react-redux";
-import { login, selectStatus } from "../store/userSlice";
+import { login, selectStatus } from "../../store/userSlice";
 import { useNavigate } from "react-router-dom";
 
 const Login = () => {

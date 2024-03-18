@@ -11,17 +11,19 @@ import {
   createBrowserRouter,
   createRoutesFromElements,
 } from "react-router-dom";
-import Login from "./components/Login.jsx";
+import Login from "./components/pages/Login.jsx";
 
-import ErrorPage from "./components/ErrorPage.jsx";
-import SignUp from "./components/SignUp.jsx";
+import ErrorPage from "./components/pages/ErrorPage.jsx";
+import SignUp from "./components/pages/SignUp.jsx";
 import { Provider } from "react-redux";
 import { store } from "./store/store.js";
 import ProtectedRoute from "./components/private/ProtectedRoute.jsx";
 import Home from "./components/private/Home.jsx";
-import Addpost from "./components/private/Addpost.jsx";
+
 import Posts from "./components/private/Posts.jsx";
 import Post from "./components/private/Post.jsx";
+import PostForm from "./components/private/PostForm.jsx";
+import EditPost from "./components/private/EditPost.jsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -31,9 +33,10 @@ const router = createBrowserRouter(
       <Route path="signup" element={<SignUp />} />
       <Route element={<ProtectedRoute />}>
         <Route path="home" element={<Home />} />
-        <Route path="addpost" element={<Addpost />} />
+        <Route path="addpost" element={<PostForm />} />
         <Route path="posts" element={<Posts />} />
-        <Route path="posts/:id" element={<Post />} />
+        <Route path="post/:id" element={<Post />} />
+        <Route path="editpost/:id" element={<EditPost />} />
       </Route>
       <Route path="*" element={<ErrorPage />} />
     </Route>

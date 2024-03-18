@@ -32,7 +32,7 @@ export class AuthService {
 
   async login({ email, password }) {
     try {
-      await this.account.createEmailPasswordSession(email, password);
+      await this.account.createEmailSession(email, password);
       return await this.getCurrentUser();
     } catch (error) {
       throw error;

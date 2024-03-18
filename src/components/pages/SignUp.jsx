@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import authService from "../appwrite/auth";
+import authService from "../../appwrite/auth";
 import { useDispatch, useSelector } from "react-redux";
-import { login, selectUser } from "../store/userSlice";
+import { login, selectUser } from "../../store/userSlice";
 
 const SignUp = () => {
   const {

@@ -70,16 +70,18 @@ export class dbService {
     }
   }
 
-  async getPosts(quires = [Query.orderAsc($createdAt)]) {
+  async getPosts(
+    queries = [Query.equal("status", "active"), Query.orderDesc("$createdAt")]
+  ) {
     try {
       return await this.database.listDocuments(
         conf.databaseId,
         conf.collectionId,
-        quires
+        queries
       );
     } catch (error) {
-      console.log("appwrite error: update Document :", error);
-      return false;
+      console.error("Appwrite error :: fetching posts:", error);
+      throw new Error("Failed to retrieve posts");
     }
   }
 

@@ -26,7 +26,7 @@ const PostCard = ({ post }) => {
           <h1 className="font-semibold text-xl">{post.title}</h1>
           <div>{parser(post.content)}</div>
           <div className="italic text-xs flex items-center justify-between  ">
-            <h3>Posted By : {post.userId}</h3>
+            <h3 className="capitalize">Posted By : {post.userName}</h3>
             <h3>{formatDistanceToNow(post.$createdAt)} ago</h3>
           </div>
         </div>

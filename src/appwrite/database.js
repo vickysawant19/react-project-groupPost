@@ -19,6 +19,7 @@ export class dbService {
     featuredImage,
     status,
     userId,
+    userName,
   }) {
     try {
       return await this.database.createDocument(
@@ -31,11 +32,12 @@ export class dbService {
           featuredImage,
           status,
           userId,
+          userName,
         }
       );
     } catch (error) {
-      console.log("appwrite error :: createdocument", error);
-      return false;
+      this.bucket.deleteFile(conf.bucketId, featuredImage);
+      throw new Error(`Error:${error.message.split(".")[0]}`);
     }
   }
 
@@ -81,7 +83,7 @@ export class dbService {
       );
     } catch (error) {
       console.error("Appwrite error :: fetching posts:", error);
-      throw new Error("Failed to retrieve posts");
+      throw new Error(`Error:${error.message.split(".")[0]}`);
     }
   }
 
@@ -102,8 +104,8 @@ export class dbService {
     try {
       return await this.bucket.createFile(conf.bucketId, ID.unique(), file);
     } catch (error) {
-      console.log("appwrite error :: uploadFile ", error);
-      return false;
+      console.log(error);
+      throw new Error(`Error:${error.message}`);
     }
   }
 

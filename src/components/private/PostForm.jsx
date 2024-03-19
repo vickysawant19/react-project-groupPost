@@ -13,6 +13,7 @@ import Button from "../Button";
 const PostForm = ({ post }) => {
   const [img, setImg] = useState();
   const [previewImg, setPreviewImg] = useState();
+  const [error, setError] = useState();
 
   const { register, handleSubmit, watch, setValue, control, getValues } =
     useForm({
@@ -51,6 +52,7 @@ const PostForm = ({ post }) => {
   }, [post]);
 
   const submit = async (data) => {
+    setError(null);
     if (post) {
       const file = data.image[0] ? dbservice.uploadFile(data.image[0]) : null;
 
@@ -67,14 +69,20 @@ const PostForm = ({ post }) => {
     } else {
       const file = await dbservice.uploadFile(data.image[0]);
       if (file) {
-        const fileId = file.$id;
-        data.featuredImage = fileId;
-        const dbPost = await dbservice.createDocument({
-          ...data,
-          userId: userData.$id,
-        });
-        if (dbPost) {
-          navigate(`/post/${dbPost.$id}`);
+        try {
+          const fileId = file.$id;
+          data.featuredImage = fileId;
+          const dbPost = await dbservice.createDocument({
+            ...data,
+            userId: userData.$id,
+            userName: userData.name,
+          });
+          if (dbPost) {
+            navigate(`/post/${dbPost.$id}`);
+          }
+        } catch (error) {
+          setError(error.message);
+          alert(error.message);
         }
       }
     }
@@ -101,7 +109,10 @@ const PostForm = ({ post }) => {
   }, [watch, setValue, slugTransform]);
 
   return (
-    <form onSubmit={handleSubmit(submit)} className="flex flex-wrap p-2">
+    <form
+      onSubmit={handleSubmit(submit)}
+      className="md:flex p-2 max-w-screen-xl mx-auto"
+    >
       <div className="md:w-2/3 w-full px-2">
         <Input
           label="Title :"
@@ -133,29 +144,29 @@ const PostForm = ({ post }) => {
           className="w-full mb-2"
         />
       </div>
-
       <div className="md:w-1/3 w-full m-2">
         <Input
           label="Featured Image:"
           type="file"
-          className="mb-2"
+          className="mb-4 bg-white rounded-md"
           accept="image/png,image/jpg,image/jpeg,image/gif"
           {...register("image", { required: !post })}
           onChange={handleFileInputChange}
         />
+
         {previewImg && (
-          <div>
-            <h2>Preview:</h2>
-            <img className="h-32 mb-2" src={previewImg} alt="Preview" />
+          <div className="bg-white mb-2 p-2 rounded-md">
+            <h2 className="font-semibold">Preview:</h2>
+            <img className="h-32 mb-2 rounded" src={previewImg} alt="Preview" />
           </div>
         )}
         {post && (
-          <div>
+          <div className="bg-white mb-2 p-2 rounded-md">
             <h2>Image:</h2>
             <img
               src={img}
               alt={post.title}
-              className="mb-2 h-32 object-contain"
+              className="mb-2 h-32 object-contain rounded"
             />
           </div>
         )}
@@ -173,6 +184,7 @@ const PostForm = ({ post }) => {
         >
           {post ? "update" : "Submit"}
         </Button>
+        {error}
       </div>
     </form>
   );

@@ -4,12 +4,16 @@ import PostCard from "./PostCard";
 import { formatDistanceToNow } from "date-fns";
 import Button from "../Button";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { selectUser } from "../../store/userSlice";
 
 const Posts = () => {
   const [posts, setPosts] = useState([]);
+
   const [isdelete, setIsDelete] = useState(false);
 
   const navigate = useNavigate();
+  const userData = useSelector(selectUser);
 
   const handledelete = async (id) => {
     setIsDelete(true);
@@ -42,36 +46,49 @@ const Posts = () => {
       </div>
       Posts
       {posts &&
-        posts.map((post) => (
-          <div key={post.$id} className="relative">
-            <PostCard post={post} />
-            <div className=" flex justify-end mr-4 gap-3 absolute z-10 right-2 top-2 text-sm">
-              <Button
-                onClick={() => {
-                  navigate(`/editpost/${post.$id}`);
-                }}
-                type="button"
-                bgColor="bg-green-600"
-                textColor="text-white"
-                className=""
-              >
-                Edit
-              </Button>
-              <Button
-                onClick={() => {
-                  handledelete(post.$id);
-                }}
-                type="button"
-                bgColor="bg-red-600"
-                textColor="text-white"
-                className=""
-                disabled={isdelete}
-              >
-                Delete
-              </Button>
+        posts.map((post) => {
+          const isAuther = userData.$id === post.userId;
+
+          return (
+            <div key={post.$id} className="max-w-screen-xl mx-auto  w-full">
+              <div className="relative ">
+                <PostCard post={post} />
+
+                <div className=" flex justify-end mr-4 gap-3 absolute z-10 right-2 top-2 text-sm">
+                  {isAuther ? (
+                    <>
+                      <Button
+                        onClick={() => {
+                          navigate(`/editpost/${post.$id}`);
+                        }}
+                        type="button"
+                        bgColor="bg-green-600"
+                        textColor="text-white"
+                        className=""
+                      >
+                        Edit
+                      </Button>
+                      <Button
+                        onClick={() => {
+                          handledelete(post.$id);
+                        }}
+                        type="button"
+                        bgColor="bg-red-600"
+                        textColor="text-white"
+                        className=""
+                        disabled={isdelete}
+                      >
+                        Delete
+                      </Button>
+                    </>
+                  ) : (
+                    ""
+                  )}
+                </div>
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
     </div>
   );
 };

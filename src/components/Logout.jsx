@@ -3,6 +3,7 @@ import authService from "../appwrite/auth";
 import { useDispatch, useSelector } from "react-redux";
 import { logout, selectUser } from "../store/userSlice";
 import { Navigate, useNavigate } from "react-router-dom";
+import Button from "./Button";
 
 const Logout = () => {
   const navigate = useNavigate();
@@ -17,12 +18,14 @@ const Logout = () => {
   };
 
   return (
-    <div className=" hover:bg-sky-500 ">
-      <button onClick={handleLogout} className="text-blue-950">
-        <h1 className="p-1 ">
-          {userData?.name} | <span>Logout</span>
-        </h1>
-      </button>
+    <div className=" hover:bg-sky-500 flex items-center justify-center m-2 ">
+      <Button
+        onClick={handleLogout}
+        bgColor="bg-red-600"
+        className="text-blue-950 text-sm"
+      >
+        Logout
+      </Button>
     </div>
   );
 };

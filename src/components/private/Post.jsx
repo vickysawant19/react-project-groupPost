@@ -34,14 +34,21 @@ const Post = () => {
 
   return (
     <div className="w-full max-w-screen-xl mx-auto  h-screen">
-      <div className="m-2 rounded p-2 bg-[#7EAAC2] ">
-        <div className="font-semibold">{postData?.userId} :</div>
+      <div className="m-2 rounded bg-[#7EAAC2] ">
+        <div className="font-semibold p-2 capitalize">
+          {postData?.userName}{" "}
+        </div>
         <img
           className="w-full h-40 object-contain mb-2"
           src={postData?.image}
         />
-        <div className="mb-2 font-semibold py-2"> Title: {postData?.title}</div>
-        <div className="mb-2">Contain: {parser(String(postData?.content))}</div>
+        <hr />
+        <div className="mb-2 font-semibold p-2 capitalize">
+          {" "}
+          {postData?.title}
+        </div>
+        <hr />
+        <div className="mb-2 p-2"> {parser(String(postData?.content))}</div>
       </div>
     </div>
   );

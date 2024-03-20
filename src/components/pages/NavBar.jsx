@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { selectStatus, selectUser } from "../../store/userSlice";
 import Logo from "../Logo";
@@ -10,6 +10,7 @@ const NavBar = () => {
   const userData = useSelector(selectUser);
   const status = useSelector(selectStatus);
   const [profileOpen, setProfileOpen] = useState(false);
+  const navigate = useNavigate();
 
   const NavItem = [
     {
@@ -28,6 +29,12 @@ const NavBar = () => {
       active: status,
     },
   ];
+
+  useEffect(() => {
+    if (!status) {
+      navigate("/login");
+    }
+  }, []);
 
   return (
     <>
@@ -67,26 +74,34 @@ const NavBar = () => {
                 </NavLink>
               </div>
             )}
-            <div
-              onClick={() => {
-                setProfileOpen(!profileOpen);
-              }}
-              className="w-10 h-10 rounded-full m-2 bg-white relative"
-            >
+            {status && (
               <div
-                className={`bg-white absolute z-10 top-10 right-5 rounded-xl duration-300 transform origin-top-right transition-all ${
-                  profileOpen ? "scale-100 opacity-100" : "scale-0 opacity-0"
-                }`}
+                onClick={() => {
+                  setProfileOpen(!profileOpen);
+                }}
+                className="w-10 h-10 rounded-full m-2 bg-blue-800 relative"
               >
-                {userData && (
-                  <div className="p-2 bg-blue-900 overflow-hidden rounded-xl text-white">
-                    <h1 className="uppercase font-semibold">{userData.name}</h1>
-                    <h1 className="italic">{userData.email}</h1>
-                    <Logout />
-                  </div>
-                )}
+                <div className="flex items-center w-full h-full justify-center font-bold uppercase text-2xl overflow-hidden rounded-full text-yellow-300">
+                  {userData.name.slice(0, 2)}
+                </div>
+                <div
+                  className={`bg-white absolute z-10 top-10 right-5 rounded-xl duration-300 transform origin-top-right transition-all ${
+                    profileOpen ? "scale-100 opacity-100" : "scale-0 opacity-0"
+                  }`}
+                >
+                  {userData && (
+                    <div className="p-2 bg-blue-900 overflow-hidden rounded-xl text-white">
+                      <h1 className="uppercase font-semibold">
+                        {userData.name}
+                      </h1>
+                      <h1 className="italic">{userData.email}</h1>
+                      <hr />
+                      <Logout />
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
       </div>

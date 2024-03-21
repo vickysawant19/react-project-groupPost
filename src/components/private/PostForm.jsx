@@ -14,6 +14,7 @@ const PostForm = ({ post }) => {
   const [img, setImg] = useState();
   const [previewImg, setPreviewImg] = useState();
   const [error, setError] = useState();
+  const [isLoading, setIsLoading] = useState(true);
 
   const { register, handleSubmit, watch, setValue, control, getValues } =
     useForm({
@@ -48,12 +49,15 @@ const PostForm = ({ post }) => {
   };
 
   useEffect(() => {
+    setIsLoading(true);
     getImage();
+    setIsLoading(false);
   }, [post]);
 
   const submit = async (data) => {
-    console.log("submitting");
+    setIsLoading(true);
     setError(null);
+
     if (post) {
       const image = data.image[0]
         ? new File([data.image[0]], `${data.slug + new Date().toISOString()}`, {
@@ -61,7 +65,6 @@ const PostForm = ({ post }) => {
           })
         : undefined;
       const file = image ? await dbservice.uploadFile(image) : null;
-      console.log(data);
 
       if (file) {
         console.log(post.featuredImage);
@@ -97,6 +100,7 @@ const PostForm = ({ post }) => {
         }
       }
     }
+    setIsLoading(false);
   };
 
   const slugTransform = useCallback((value) => {
@@ -189,8 +193,15 @@ const PostForm = ({ post }) => {
           type="submit"
           bgColor={post ? "bg-green-500" : undefined}
           className="w-full mt-2 border"
+          disabled={isLoading}
         >
-          {post ? "update" : "Submit"}
+          {post
+            ? isLoading
+              ? "Updating...."
+              : "Update"
+            : isLoading
+            ? "Submiting..."
+            : "Submit"}
         </Button>
         {error}
       </div>

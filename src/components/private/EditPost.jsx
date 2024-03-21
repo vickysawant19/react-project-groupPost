@@ -21,12 +21,7 @@ const EditPost = () => {
     getpost();
   }, []);
 
-  return (
-    <div>
-      EditPost
-      {postData && <PostForm post={postData} />}
-    </div>
-  );
+  return <div>{postData && <PostForm post={postData} />}</div>;
 };
 
 export default EditPost;

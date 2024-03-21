@@ -27,14 +27,13 @@ const Posts = () => {
       setPosts(posts.documents);
     }
   };
-  // console.log(posts);
 
   useEffect(() => {
     getposts();
   }, [isdelete]);
 
   return (
-    <div className="">
+    <div className="w-full  flex flex-wrap h-full">
       <div
         className={`${
           isdelete
@@ -44,18 +43,20 @@ const Posts = () => {
       >
         Loading...
       </div>
-      Posts
-      {posts &&
-        posts.map((post) => {
-          const isAuther = userData.$id === post.userId;
+      <div class="flex flex-wrap md:max-w-screen-xl mx-auto w-full  ">
+        {posts &&
+          posts.map((post) => {
+            const isAuther = userData.$id === post.userId;
 
-          return (
-            <div key={post.$id} className="max-w-screen-xl mx-auto  w-full">
-              <div className="relative ">
+            return (
+              <div
+                key={post.$id}
+                className="md:w-1/4  w-full rounded  relative p-2"
+              >
                 <PostCard post={post} />
 
-                <div className=" flex justify-end mr-4 gap-3 absolute z-10 right-2 top-2 text-sm">
-                  {isAuther ? (
+                <div className=" flex justify-end mr-4 gap-3 absolute z-10 right-2 top-5 text-sm">
+                  {isAuther && (
                     <>
                       <Button
                         onClick={() => {
@@ -64,7 +65,7 @@ const Posts = () => {
                         type="button"
                         bgColor="bg-green-600"
                         textColor="text-white"
-                        className=""
+                        className="shadow-xl md:shadow-white"
                       >
                         Edit
                       </Button>
@@ -75,20 +76,18 @@ const Posts = () => {
                         type="button"
                         bgColor="bg-red-600"
                         textColor="text-white"
-                        className=""
+                        className="shadow-xl md:shadow-white"
                         disabled={isdelete}
                       >
                         Delete
                       </Button>
                     </>
-                  ) : (
-                    ""
                   )}
                 </div>
               </div>
-            </div>
-          );
-        })}
+            );
+          })}
+      </div>
     </div>
   );
 };

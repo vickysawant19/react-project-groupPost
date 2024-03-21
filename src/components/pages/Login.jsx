@@ -11,32 +11,33 @@ const Login = () => {
     handleSubmit,
     formState: { errors },
   } = useForm();
+  const [errMsg, setErrMsg] = useState(null);
 
   const dispatch = useDispatch();
   const userStatus = useSelector(selectStatus);
+  const navigate = useNavigate();
 
-  const onSubmit = (values) => {
-    authService
-      .login(values)
-      .then((userData) => {
-        if (userData) {
-          authService.getCurrentUser().then((user) => {
-            if (user) {
-              dispatch(login(user));
-              navigate("/home");
-            }
-          });
-        } else {
-          navigate("/login");
+  const onSubmit = async (values) => {
+    try {
+      const user = await authService.login(values);
+
+      if (user) {
+        const userLog = await authService.getCurrentUser();
+        if (userLog) {
+          dispatch(login(userLog));
+          navigate("/home");
         }
-      })
-      .catch((error) => {
-        console.error("An error occurred during login:", error);
+      } else {
         navigate("/login");
-      });
+      }
+    } catch (error) {
+      // console.error("An error occurred during login:", error);
+      setErrMsg(error.message);
+
+      navigate("/login");
+    }
   };
 
-  const navigate = useNavigate();
   useEffect(() => {
     if (userStatus) {
       navigate("/home");
@@ -57,14 +58,21 @@ const Login = () => {
               className="border p-2"
               type="Email"
             />
+            <div className="text-red-500">
+              {errors.email && errors.email.message}
+            </div>
             <label htmlFor="">Password</label>
             <input
               {...register("password", { required: "Password Required" })}
               className="border p-2"
               type="password"
             />
+            <div className="text-red-500">
+              {errors.password && errors.password.message}
+            </div>
             <button className="w-full mt-4 mb-2 p-2 bg-[#B8E8F1]">Login</button>
           </div>
+          <div className="px-2 text-red-500"> {errMsg}</div>
         </form>
       </div>
     </>

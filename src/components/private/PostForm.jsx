@@ -152,7 +152,7 @@ const PostForm = ({ post }) => {
           className="w-full mb-2"
         />
       </div>
-      <div className="md:w-1/3 w-full m-2">
+      <div className="md:w-1/3 w-full mb-2 p-2">
         <Input
           label="Featured Image:"
           type="file"

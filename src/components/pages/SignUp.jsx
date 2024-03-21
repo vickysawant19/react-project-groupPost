@@ -3,21 +3,52 @@ import { useForm } from "react-hook-form";
 import authService from "../../appwrite/auth";
 import { useDispatch, useSelector } from "react-redux";
 import { login, selectUser } from "../../store/userSlice";
+import { useNavigate } from "react-router-dom";
 
 const SignUp = () => {
   const {
     handleSubmit,
     register,
     formState: { errors },
+    setError,
+    getValues,
+    setValue,
+    clearErrors,
   } = useForm();
+  const [isLoading, setIsLoading] = useState(false);
 
   const userData = useSelector(selectUser);
+  const navigate = useNavigate();
 
   const dispatch = useDispatch();
 
-  const onSubmit = (values) => {
-    authService.createAccount(values).then((user) => dispatch(login(user)));
+  const onSubmit = async (values) => {
+    clearErrors();
+    console.log("herer");
+    try {
+      setIsLoading(true);
+      const user = await authService.createAccount(values);
+      if (user) {
+        dispatch(login(user));
+        navigate("/");
+        return;
+      }
+    } catch (error) {
+      // console.log(error.message);
+      setError("errMsg", {
+        type: "manual",
+        message: error.message,
+      });
+
+      navigate("/signup");
+    } finally {
+      setIsLoading(false);
+    }
   };
+
+  useEffect(() => {
+    clearErrors();
+  }, []);
 
   return (
     <>
@@ -61,9 +92,29 @@ const SignUp = () => {
           <div className="text-red-500">
             {errors.password && errors.password.message}
           </div>
-          <button type="submit" className="w-full mt-4 mb-2 p-2 bg-[#B8E8F1]">
+          <button
+            disabled={isLoading}
+            type="submit"
+            className="w-full mt-4 mb-2 p-2 bg-[#B8E8F1] disabled:bg-gray-500"
+          >
             SignUp
           </button>
+          <div className="text-red-500">
+            {isLoading ? "Loading..." : ""}
+            {errors.errMsg && (
+              <div className="flex ">
+                {" "}
+                {errors.errMsg.message}
+                <div
+                  className="border p-1 size-5 flex items-center text-black hover:bg-red-100"
+                  onClick={() => clearErrors("errMsg")}
+                >
+                  {" "}
+                  X{" "}
+                </div>{" "}
+              </div>
+            )}
+          </div>
         </form>
       </div>
     </>

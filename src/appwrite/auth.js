@@ -21,12 +21,11 @@ export class AuthService {
       );
       if (userAccount) {
         //call another method
-        return this.login({ email, password });
-      } else {
-        return userAccount;
+        console.log("here with ", userAccount);
+        return await this.login({ email, password });
       }
     } catch (error) {
-      throw error;
+      throw new Error(`${error.message.split(".")[0]}`);
     }
   }
 
@@ -35,7 +34,7 @@ export class AuthService {
       await this.account.createEmailSession(email, password);
       return await this.getCurrentUser();
     } catch (error) {
-      throw error;
+      throw new Error(`${error.message.split(".")[0]}`);
     }
   }
 
@@ -44,16 +43,15 @@ export class AuthService {
       const user = await this.account.get();
       return user;
     } catch (error) {
-      console.log("appwrite service::getCurrentUser", error);
+      throw new Error(`${error.message.split(".")[0]}`);
     }
-    return null;
   }
 
   async logout() {
     try {
       return await this.account.deleteSession("current");
     } catch (error) {
-      console.log("appwrite service::logout", error);
+      throw new Error(error);
     }
   }
 }

@@ -86,7 +86,7 @@ const NavBar = () => {
                 className="w-10 h-10 rounded-full bg-blue-800 relative"
               >
                 <div className="flex items-center w-full h-full justify-center font-bold uppercase text-3xl overflow-hidden rounded-full text-yellow-300">
-                  {userData.name.slice(0, 1)}
+                  {userData.name?.slice(0, 1)}
                 </div>
                 <div
                   className={`bg-white absolute z-10 top-10 right-5 rounded-xl duration-300 transform origin-top-right transition-all ${
@@ -109,7 +109,7 @@ const NavBar = () => {
           </div>
         </div>
       </div>
-      <div className="h-14"></div>
+      <div className="h-16  "></div>
     </>
   );
 };

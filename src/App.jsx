@@ -11,19 +11,22 @@ function App() {
   const [isLoading, setIsLoading] = useState(true);
   const dispatch = useDispatch();
 
-  // const userData = useSelector(selectUser);
+  const checkUserStatus = async () => {
+    try {
+      setIsLoading(true);
+      const user = await authService.getCurrentUser();
+      if (user) {
+        dispatch(login(user));
+      }
+    } catch (error) {
+      console.log(error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    authService
-      .getCurrentUser()
-      .then((user) => {
-        if (user) {
-          dispatch(login(user));
-        }
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
+    checkUserStatus();
   }, []);
 
   return (

@@ -38,17 +38,19 @@ const NavBar = () => {
 
   return (
     <>
-      <div className=" w-full font-mono bg-[#B8E8F1] text-xl fixed z-30 ">
-        <div className="max-w-screen-xl  mx-auto  flex justify-between items-center  font-sans text-[15px]">
-          <div className="flex items-center ">
-            <Logo width="30px" />
-            <h1 className="mx-2">VS-GroupPostApp </h1>
+      <div className=" w-full font-mono  text-white text-xl fixed z-30 ">
+        <div className="max-w-screen-xl  mx-auto  flex justify-between items-center  font-sans text-[15px] w-full">
+          <div className="flex items-center justify-start w-1/3 ">
+            <Logo width="30px" className="font-mono" />
+            <h1 className=" font-bold text-xl text-blue-100 uppercase">
+              VS-Post{" "}
+            </h1>
           </div>
-          <div className="flex items-center gap-2 mx-2 ">
+          <div className="flex justify-end gap-2 mx-2 w-2/3 ">
             {status &&
               NavItem.map((item) => (
                 <NavLink
-                  className="border p-1 hover:bg-sky-500"
+                  className="p-1 hover:bg-sky-500"
                   key={item.name}
                   to={item.slug}
                 >
@@ -74,15 +76,17 @@ const NavBar = () => {
                 </NavLink>
               </div>
             )}
+          </div>
+          <div className="p-2 flex items-center justify-center">
             {status && (
               <div
                 onClick={() => {
                   setProfileOpen(!profileOpen);
                 }}
-                className="w-10 h-10 rounded-full m-2 bg-blue-800 relative"
+                className="w-10 h-10 rounded-full bg-blue-800 relative"
               >
-                <div className="flex items-center w-full h-full justify-center font-bold uppercase text-2xl overflow-hidden rounded-full text-yellow-300">
-                  {userData.name.slice(0, 2)}
+                <div className="flex items-center w-full h-full justify-center font-bold uppercase text-3xl overflow-hidden rounded-full text-yellow-300">
+                  {userData.name.slice(0, 1)}
                 </div>
                 <div
                   className={`bg-white absolute z-10 top-10 right-5 rounded-xl duration-300 transform origin-top-right transition-all ${

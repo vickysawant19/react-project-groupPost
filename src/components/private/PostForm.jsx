@@ -52,13 +52,22 @@ const PostForm = ({ post }) => {
   }, [post]);
 
   const submit = async (data) => {
+    console.log("submitting");
     setError(null);
     if (post) {
-      const file = data.image[0] ? dbservice.uploadFile(data.image[0]) : null;
+      const image = data.image[0]
+        ? new File([data.image[0]], `${data.slug + new Date().toISOString()}`, {
+            type: data.image[0]?.type || "image/jpeg",
+          })
+        : undefined;
+      const file = image ? await dbservice.uploadFile(image) : null;
+      console.log(data);
 
       if (file) {
-        dbservice.deleteFile(post.featuredImage);
+        console.log(post.featuredImage);
+        await dbservice.deleteFile(post.featuredImage);
       }
+
       const dbPost = await dbservice.updateDocument(post.$id, {
         ...data,
         featuredImage: file ? file.$id : undefined,
@@ -72,11 +81,13 @@ const PostForm = ({ post }) => {
         try {
           const fileId = file.$id;
           data.featuredImage = fileId;
+          console.log(data);
           const dbPost = await dbservice.createDocument({
             ...data,
             userId: userData.$id,
             userName: userData.name,
           });
+          console.log(dbPost);
           if (dbPost) {
             navigate(`/post/${dbPost.$id}`);
           }
@@ -121,21 +132,18 @@ const PostForm = ({ post }) => {
           {...register("title", { required: true })}
         />
 
-        {post ? (
-          ""
-        ) : (
-          <Input
-            label="Slug :"
-            placeholder="Slug"
-            className="mb-4 "
-            {...register("slug", { required: true })}
-            onInput={(e) => {
-              setValue("slug", slugTransform(e.currentTarget.value), {
-                shouldValidate: true,
-              });
-            }}
-          />
-        )}
+        <Input
+          label="Slug :"
+          placeholder="Slug"
+          className="mb-4"
+          {...register("slug", { required: true })}
+          onInput={(e) => {
+            setValue("slug", slugTransform(e.currentTarget.value), {
+              shouldValidate: true,
+            });
+          }}
+        />
+
         <RTE
           label="Content : "
           name="content"

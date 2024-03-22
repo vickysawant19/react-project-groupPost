@@ -9,12 +9,16 @@ import { selectUser } from "../../store/userSlice";
 import Input from "../Input";
 import Select from "../Select";
 import Button from "../Button";
+import { useUpdatePostMutation } from "../../store/postSlice";
 
 const PostForm = ({ post }) => {
   const [img, setImg] = useState();
   const [previewImg, setPreviewImg] = useState();
   const [error, setError] = useState();
   const [isLoading, setIsLoading] = useState(true);
+
+  //TODO: Update using RTK
+  const [updatePost, { data: updateData }] = useUpdatePostMutation();
 
   const { register, handleSubmit, watch, setValue, control, getValues } =
     useForm({
@@ -59,15 +63,11 @@ const PostForm = ({ post }) => {
     setError(null);
 
     if (post) {
-      const image = data.image[0]
-        ? new File([data.image[0]], `${data.slug + new Date().toISOString()}`, {
-            type: data.image[0]?.type || "image/jpeg",
-          })
-        : undefined;
-      const file = image ? await dbservice.uploadFile(image) : null;
+      const file = data.image[0]
+        ? await dbservice.uploadFile(data.image[0])
+        : null;
 
       if (file) {
-        console.log(post.featuredImage);
         await dbservice.deleteFile(post.featuredImage);
       }
 
@@ -75,6 +75,7 @@ const PostForm = ({ post }) => {
         ...data,
         featuredImage: file ? file.$id : undefined,
       });
+
       if (dbPost) {
         navigate(`/post/${dbPost.$id}`);
       }

@@ -41,10 +41,7 @@ export class dbService {
     }
   }
 
-  async updateDocument(
-    slug,
-    { title, content, featuredImage, status, userId }
-  ) {
+  async updateDocument(slug, { title, content, featuredImage, status }) {
     try {
       return await this.database.updateDocument(
         conf.databaseId,

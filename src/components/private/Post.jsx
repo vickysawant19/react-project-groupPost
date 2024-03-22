@@ -5,47 +5,48 @@ import { useNavigate, useParams } from "react-router-dom";
 import { selectUser } from "../../store/userSlice";
 import dbservice from "../../appwrite/database";
 import parser from "html-react-parser";
+import { useGetPostQuery } from "../../store/postSlice";
 
 const Post = () => {
-  const [postData, setPostData] = useState(null);
   const { id: postSlug } = useParams();
   const navigate = useNavigate();
 
   const userData = useSelector(selectUser);
-  const [isLoading, setIsLoading] = useState(true);
-  const getpost = async () => {
+
+  const { data: postData, isLoading } = useGetPostQuery(postSlug);
+
+  const [imgUrl, setImgUrl] = useState(null);
+
+  const getPostImg = async () => {
     try {
-      const post = await dbservice.getPost(postSlug);
-      if (post) {
+      if (postData) {
         const { href: fileUrl } = await dbservice.getFilePreview(
-          post.featuredImage
+          postData.featuredImage
         );
-        setPostData({ ...post, image: fileUrl });
+        setImgUrl(fileUrl);
       }
     } catch (error) {
-      navigate("/posts");
-    } finally {
-      setIsLoading(false);
+      return null;
     }
   };
 
   useEffect(() => {
-    getpost();
-  }, [userData]);
-  //
+    getPostImg();
+  }, [postData]);
 
   if (isLoading) {
     return <div>Loading....</div>;
   }
-
   return (
     <div className="w-full max-w-screen-xl bg-[#7EAAC2] mx-auto">
       <div className="rounded  flex flex-wrap w-full justify-center">
         <div className="md:w-1/3 w-full flex justify-center">
-          <img
-            className="object-contain md:max-h-screen w-full "
-            src={postData?.image}
-          />
+          {imgUrl && (
+            <img
+              className="object-contain md:max-h-screen w-full "
+              src={imgUrl}
+            />
+          )}
         </div>
 
         <div className="mb-2 font-semibold capitalize w-full md:w-2/3">

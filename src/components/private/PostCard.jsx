@@ -6,11 +6,14 @@ import { formatDistanceToNow } from "date-fns";
 import Button from "../Button";
 import { useSelector } from "react-redux";
 import { selectUser } from "../../store/userSlice";
+import { useDeletePostMutation } from "../../store/postSlice";
 
 const PostCard = ({ post }) => {
   const [image, setImage] = useState();
   const userData = useSelector(selectUser);
   const navigate = useNavigate();
+
+  const [deletePost, { isLoading, error }] = useDeletePostMutation();
 
   const isAuther = userData.$id === post.userId;
 
@@ -24,9 +27,7 @@ const PostCard = ({ post }) => {
   }, [post]);
 
   const handledelete = async (id) => {
-    setIsDelete(true);
-    await dbservice.deleteDocument(id);
-    setIsDelete(false);
+    await deletePost(id);
   };
 
   return (
@@ -51,7 +52,7 @@ const PostCard = ({ post }) => {
           </div>
         </div>
       </Link>
-      <div className=" flex justify-end mr-4 gap-3 absolute z-30 right-2 top-5 text-sm">
+      <div className=" flex justify-end mr-4 gap-3 absolute z-10 right-2 top-5 text-sm">
         {isAuther && (
           <>
             <Button
@@ -72,10 +73,10 @@ const PostCard = ({ post }) => {
               type="button"
               bgColor="bg-red-600"
               textColor="text-white"
-              className="shadow-xl md:shadow-white"
-              disabled={""}
+              className="shadow-xl md:shadow-white disabled:bg-red-400"
+              disabled={isLoading}
             >
-              Delete
+              {isLoading ? "Deleting.." : "Delete"}
             </Button>
           </>
         )}

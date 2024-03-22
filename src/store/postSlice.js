@@ -1,8 +1,8 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import dbservice, { dbService } from "../appwrite/database";
+import dbservice from "../appwrite/database";
 
 export const postApi = createApi({
-  reducerPath: "pokemonApi",
+  reducerPath: "postApi",
   baseQuery: fetchBaseQuery({ credentials: "include" }),
   tagTypes: ["post"],
   endpoints: (builder) => ({
@@ -19,14 +19,40 @@ export const postApi = createApi({
         return { data: res };
       },
     }),
-    updatePost: builder.mutation({
-      async queryFn({ id, post }) {
-        const res = await dbservice.updateDocument(id, post);
-        return { data: res };
+
+    createPost: builder.mutation({
+      async queryFn(post) {
+        try {
+          const res = await dbservice.createDocument(post);
+          return { data: res };
+        } catch (error) {
+          return { error: error.message };
+        }
       },
+      invalidatesTags: ["post"],
+    }),
+
+    updatePost: builder.mutation({
+      async queryFn(post) {
+        try {
+          const res = await dbservice.updateDocument(post.$id, post);
+          return { data: res };
+        } catch (error) {
+          return { error };
+        }
+      },
+      invalidatesTags: ["post"],
     }),
     deletePost: builder.mutation({
-      async queryFn() {},
+      async queryFn(id) {
+        try {
+          const res = await dbservice.deleteDocument(id);
+          return { data: res };
+        } catch (error) {
+          return { error };
+        }
+      },
+      invalidatesTags: ["post"],
     }),
   }),
 });
@@ -36,4 +62,5 @@ export const {
   useGetPostsQuery,
   useDeletePostMutation,
   useUpdatePostMutation,
+  useCreatePostMutation,
 } = postApi;

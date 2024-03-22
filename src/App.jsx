@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import NavBar from "./components/pages/NavBar";
 import Login from "./components/pages/Login";
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { login, logout, selectUser } from "./store/userSlice";
 import authService from "./appwrite/auth";
@@ -31,17 +31,17 @@ function App() {
 
   return (
     <>
-      {isLoading ? (
-        "Loading..."
-      ) : (
-        <div className="bg-[#52718F] w-full min-h-screen">
-          <NavBar />
+      <div className="bg-[#52718F] w-full min-h-screen">
+        <NavBar />
+        {isLoading ? (
+          " Loading..."
+        ) : (
           <div className="min-h-screen">
             <Outlet />
           </div>
-          <Footer />
-        </div>
-      )}
+        )}
+        <Footer />
+      </div>
     </>
   );
 }

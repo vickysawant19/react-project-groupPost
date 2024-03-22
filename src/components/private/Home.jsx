@@ -1,5 +1,4 @@
 import React from "react";
-import Posts from "./Posts";
 import { useGetPostsQuery } from "../../store/postSlice";
 import PostCard from "./PostCard";
 

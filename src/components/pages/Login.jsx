@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import authService from "../../appwrite/auth";
 import { useDispatch, useSelector } from "react-redux";
@@ -11,6 +11,7 @@ const Login = () => {
     handleSubmit,
     formState: { errors },
   } = useForm();
+
   const [errMsg, setErrMsg] = useState(null);
 
   const dispatch = useDispatch();
@@ -20,7 +21,6 @@ const Login = () => {
   const onSubmit = async (values) => {
     try {
       const user = await authService.login(values);
-
       if (user) {
         const userLog = await authService.getCurrentUser();
         if (userLog) {
@@ -33,16 +33,15 @@ const Login = () => {
     } catch (error) {
       // console.error("An error occurred during login:", error);
       setErrMsg(error.message);
-
       navigate("/login");
     }
   };
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (userStatus) {
       navigate("/home");
     }
-  }, [userStatus, navigate]);
+  }, [userStatus]);
 
   return (
     <>

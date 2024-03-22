@@ -37,7 +37,7 @@ export class dbService {
       );
     } catch (error) {
       this.bucket.deleteFile(conf.bucketId, featuredImage);
-      throw new Error(`Error:${error.message.split(".")[0]}`);
+      throw new Error(`${error.message.split(".")[0]}`);
     }
   }
 

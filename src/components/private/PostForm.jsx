@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import RTE from "../RTE";
-import authService from "../../appwrite/auth";
+
 import dbservice from "../../appwrite/database";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -9,16 +9,25 @@ import { selectUser } from "../../store/userSlice";
 import Input from "../Input";
 import Select from "../Select";
 import Button from "../Button";
-import { useUpdatePostMutation } from "../../store/postSlice";
+import {
+  useCreatePostMutation,
+  useUpdatePostMutation,
+} from "../../store/postSlice";
 
 const PostForm = ({ post }) => {
   const [img, setImg] = useState();
   const [previewImg, setPreviewImg] = useState();
-  const [error, setError] = useState();
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
   //TODO: Update using RTK
-  const [updatePost, { data: updateData }] = useUpdatePostMutation();
+  const [
+    updatePost,
+    { data: updateData, isLoading: updateLoading, error: updateErr },
+  ] = useUpdatePostMutation();
+  const [
+    createPost,
+    { data: createData, isLoading: createLoading, isError, error: createErr },
+  ] = useCreatePostMutation();
 
   const { register, handleSubmit, watch, setValue, control, getValues } =
     useForm({
@@ -53,15 +62,11 @@ const PostForm = ({ post }) => {
   };
 
   useEffect(() => {
-    setIsLoading(true);
     getImage();
-    setIsLoading(false);
   }, [post]);
 
   const submit = async (data) => {
     setIsLoading(true);
-    setError(null);
-
     if (post) {
       const file = data.image[0]
         ? await dbservice.uploadFile(data.image[0])
@@ -71,10 +76,13 @@ const PostForm = ({ post }) => {
         await dbservice.deleteFile(post.featuredImage);
       }
 
-      const dbPost = await dbservice.updateDocument(post.$id, {
-        ...data,
-        featuredImage: file ? file.$id : undefined,
-      });
+      // const dbPost = await dbservice.updateDocument(post.$id, {
+      //   ...data,
+      //   featuredImage: file ? file.$id : undefined,
+      // });
+      data.featuredImage = file ? file.$id : undefined;
+      data.$id = post.$id;
+      const { data: dbPost } = await updatePost(data);
 
       if (dbPost) {
         navigate(`/post/${dbPost.$id}`);
@@ -85,18 +93,25 @@ const PostForm = ({ post }) => {
         try {
           const fileId = file.$id;
           data.featuredImage = fileId;
-          console.log(data);
-          const dbPost = await dbservice.createDocument({
+          data.image = "";
+
+          // const dbPost = await dbservice.createDocument({
+          //   ...data,
+          //   userId: userData.$id,
+          //   userName: userData.name,
+          // });
+          // console.log(dbPost);
+
+          const { data: dbPost } = await createPost({
             ...data,
             userId: userData.$id,
             userName: userData.name,
           });
-          console.log(dbPost);
+
           if (dbPost) {
             navigate(`/post/${dbPost.$id}`);
           }
         } catch (error) {
-          setError(error.message);
           alert(error.message);
         }
       }
@@ -194,7 +209,7 @@ const PostForm = ({ post }) => {
           type="submit"
           bgColor={post ? "bg-green-500" : undefined}
           className="w-full mt-2 border"
-          disabled={isLoading}
+          disabled={createLoading}
         >
           {post
             ? isLoading
@@ -204,7 +219,8 @@ const PostForm = ({ post }) => {
             ? "Submiting..."
             : "Submit"}
         </Button>
-        {error}
+        {updateErr}
+        {createErr}
       </div>
     </form>
   );

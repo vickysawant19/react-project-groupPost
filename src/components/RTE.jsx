@@ -25,4 +25,4 @@ const RTE = ({ name, control, label, defaultValue = "Hello", className }) => {
   );
 };
 
-export default RTE;
+export default React.memo(RTE);

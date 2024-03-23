@@ -23,6 +23,7 @@ import Home from "./components/private/Home.jsx";
 import Posts from "./components/private/Posts.jsx";
 import Post from "./components/private/Post.jsx";
 import PostForm from "./components/private/PostForm.jsx";
+
 import EditPost from "./components/private/EditPost.jsx";
 
 const router = createBrowserRouter(

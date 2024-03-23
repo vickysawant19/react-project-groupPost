@@ -18,6 +18,12 @@ const Login = () => {
   const userStatus = useSelector(selectStatus);
   const navigate = useNavigate();
 
+  useLayoutEffect(() => {
+    if (userStatus) {
+      navigate("/home");
+    }
+  }, [userStatus]);
+
   const onSubmit = async (values) => {
     try {
       const user = await authService.login(values);
@@ -36,12 +42,6 @@ const Login = () => {
       navigate("/login");
     }
   };
-
-  useLayoutEffect(() => {
-    if (userStatus) {
-      navigate("/home");
-    }
-  }, [userStatus]);
 
   return (
     <>

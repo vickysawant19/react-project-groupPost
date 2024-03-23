@@ -13,6 +13,7 @@ export const postApi = createApi({
       },
       providesTags: ["post"],
     }),
+
     getPost: builder.query({
       async queryFn(slug) {
         const res = await dbservice.getPost(slug);

@@ -1,25 +1,13 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import React from "react";
+import { useParams } from "react-router-dom";
 import PostForm from "./PostForm";
-import dbservice from "../../appwrite/database";
+
+import { useGetPostQuery } from "../../store/postSlice";
 
 const EditPost = () => {
   const { id } = useParams();
-  const navigate = useNavigate();
-  const [postData, setPostData] = useState();
 
-  const getpost = async () => {
-    const postDataa = await dbservice.getPost(id);
-    if (postDataa) {
-      setPostData(postDataa);
-    } else {
-      navigate("/posts");
-    }
-  };
-
-  useEffect(() => {
-    getpost();
-  }, []);
+  const { data: postData, isLoading } = useGetPostQuery(id);
 
   return <div>{postData && <PostForm post={postData} />}</div>;
 };

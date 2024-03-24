@@ -34,9 +34,11 @@ const NavBar = () => {
     <>
       <div className=" w-full font-mono  bg-[#7EAAC2]  text-xl fixed z-30 shadow ">
         <div className="max-w-screen-xl  mx-auto  flex justify-between items-center  font-sans text-[15px] w-full">
-          <div className="flex items-center justify-start pr-3 bg-[#D3ECE8] border rounded-full m-2  ">
+          <div className="flex items-center justify-start pr-3 rounded-full m-2  ">
             <Logo width="30px" className="font-mono" />
-            <h1 className=" font-bold  text-blue-900 uppercase ">VS-Post</h1>
+            <h1 className=" font-extrabold  text-blue-900 uppercase ">
+              VS-Post
+            </h1>
           </div>
           <div className="flex justify-end items-center font-bold text-gray-800 ">
             {status &&
@@ -77,7 +79,7 @@ const NavBar = () => {
               </div>
             )}
 
-            <div className="p-2 flex items-center justify-center ">
+            <button className="p-2 flex items-center justify-center ">
               {status && (
                 <div
                   onClick={() => {
@@ -101,14 +103,14 @@ const NavBar = () => {
                           {userData.name}
                         </h1>
                         <h1 className="italic font-normal">{userData.email}</h1>
-                        <hr />
+
                         <Logout />
                       </div>
                     )}
                   </div>
                 </div>
               )}
-            </div>
+            </button>
           </div>
         </div>
 

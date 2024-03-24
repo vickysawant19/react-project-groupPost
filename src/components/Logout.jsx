@@ -22,7 +22,7 @@ const Logout = () => {
       <Button
         onClick={handleLogout}
         bgColor="bg-red-600 "
-        className="text-blue-950 text-sm w-full hover:bg-red-300"
+        className="text-blue-950 text-sm w-full hover:text-gray-800 hover:bg-red-300"
       >
         Logout
       </Button>

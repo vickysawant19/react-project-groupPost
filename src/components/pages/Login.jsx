@@ -12,6 +12,7 @@ const Login = () => {
     formState: { errors },
   } = useForm();
 
+  const [isLoading, setIsLoading] = useState(false);
   const [errMsg, setErrMsg] = useState(null);
 
   const dispatch = useDispatch();
@@ -26,6 +27,7 @@ const Login = () => {
 
   const onSubmit = async (values) => {
     try {
+      setIsLoading(true);
       const user = await authService.login(values);
       if (user) {
         const userLog = await authService.getCurrentUser();
@@ -40,6 +42,8 @@ const Login = () => {
       // console.error("An error occurred during login:", error);
       setErrMsg(error.message);
       navigate("/login");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -69,7 +73,14 @@ const Login = () => {
             <div className="text-red-500">
               {errors.password && errors.password.message}
             </div>
-            <button className="w-full mt-4 mb-2 p-2 bg-[#B8E8F1]">Login</button>
+            {/* bg-[#B8E8F1]" */}
+            <button
+              disabled={isLoading}
+              className={` disabled:bg-gray-600  disabled:border disabled:text-white disabled:text-xl disabled:animate-pulse bg-[#B8E8F1]
+              w-full mt-4 mb-2 p-2 `}
+            >
+              {isLoading ? "....." : "Login "}
+            </button>
           </div>
           <div className="px-2 text-red-500"> {errMsg}</div>
         </form>

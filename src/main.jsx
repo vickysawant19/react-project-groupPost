@@ -32,6 +32,7 @@ const router = createBrowserRouter(
       <Route path="login" element={<Login />} />
       <Route path="signup" element={<SignUp />} />
       <Route element={<ProtectedRoute />}>
+        <Route index element={<Home />} />
         <Route path="home" element={<Home />} />
         <Route path="addpost" element={<PostForm />} />
         <Route path="posts" element={<Posts />} />

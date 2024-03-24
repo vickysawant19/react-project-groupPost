@@ -24,13 +24,13 @@ const SignUp = () => {
 
   const onSubmit = async (values) => {
     clearErrors();
-    console.log("herer");
+
     try {
       setIsLoading(true);
       const user = await authService.createAccount(values);
       if (user) {
         dispatch(login(user));
-        navigate("/");
+        navigate("/home");
         return;
       }
     } catch (error) {

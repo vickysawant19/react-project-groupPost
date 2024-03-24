@@ -9,13 +9,13 @@ import Logout from "../Logout";
 const NavBar = () => {
   const userData = useSelector(selectUser);
   const status = useSelector(selectStatus);
+
   const [profileOpen, setProfileOpen] = useState(false);
-  const navigate = useNavigate();
 
   const NavItem = [
     {
       name: "Home",
-      slug: "/",
+      slug: "/home",
       active: true,
     },
     {
@@ -29,12 +29,6 @@ const NavBar = () => {
       active: status,
     },
   ];
-
-  useEffect(() => {
-    if (!status) {
-      navigate("/login");
-    }
-  }, []);
 
   return (
     <>
@@ -59,12 +53,12 @@ const NavBar = () => {
             {userData ? (
               ""
             ) : (
-              <div>
+              <div className="flex gap-2">
                 <NavLink
                   className={({ isActive }) =>
                     isActive
                       ? "hidden"
-                      : "font-bold text-gray-900 p-2  rounded-full border bg-green-300 hover:bg-green-400"
+                      : "font-bold text-gray-900 p-1 rounded-full border bg-green-300 hover:bg-green-400"
                   }
                   to={"login"}
                 >
@@ -74,7 +68,7 @@ const NavBar = () => {
                   className={({ isActive }) =>
                     isActive
                       ? "hidden"
-                      : "font-bold text-gray-900 p-2 rounded-full border hover:bg-green-400 bg-green-300"
+                      : "font-bold text-gray-900 p-1 rounded-full border hover:bg-green-400 bg-green-300"
                   }
                   to={"signup"}
                 >
@@ -83,7 +77,7 @@ const NavBar = () => {
               </div>
             )}
 
-            <div className="p-2 flex items-center justify-center">
+            <div className="p-2 flex items-center justify-center ">
               {status && (
                 <div
                   onClick={() => {
@@ -95,18 +89,18 @@ const NavBar = () => {
                     {userData.name?.slice(0, 1)}
                   </div>
                   <div
-                    className={`bg-white absolute z-10 top-10 right-5 rounded-xl duration-300 transform origin-top-right transition-all ${
+                    className={`absolute top-10 z-50 right-5 rounded-xl duration-300 transform origin-top-right transition-all ${
                       profileOpen
                         ? "scale-100 opacity-100"
                         : "scale-0 opacity-0"
                     }`}
                   >
                     {userData && (
-                      <div className="p-2 bg-blue-900 overflow-hidden rounded-xl text-white">
+                      <div className="p-2 bg-blue-500 overflow-hidden rounded-xl text-gray-300">
                         <h1 className="uppercase font-semibold">
                           {userData.name}
                         </h1>
-                        <h1 className="italic">{userData.email}</h1>
+                        <h1 className="italic font-normal">{userData.email}</h1>
                         <hr />
                         <Logout />
                       </div>
@@ -117,8 +111,17 @@ const NavBar = () => {
             </div>
           </div>
         </div>
+
+        {profileOpen && (
+          <div
+            className="w-full h-screen absolute top-0 z-40"
+            onClick={() => {
+              setProfileOpen(false);
+            }}
+          ></div>
+        )}
       </div>
-      <div className="h-16 "></div>
+      <div className="h-16 "> </div>
     </>
   );
 };

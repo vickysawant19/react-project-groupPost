@@ -18,11 +18,11 @@ const Logout = () => {
   };
 
   return (
-    <div className=" hover:bg-sky-500 flex items-center justify-center m-2 ">
+    <div className="flex my-2 ">
       <Button
         onClick={handleLogout}
-        bgColor="bg-red-600"
-        className="text-blue-950 text-sm"
+        bgColor="bg-red-600 "
+        className="text-blue-950 text-sm w-full hover:bg-red-300"
       >
         Logout
       </Button>
